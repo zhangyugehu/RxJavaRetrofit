@@ -12,6 +12,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
+import rx.Observer;
 import rx.Scheduler;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -50,7 +51,7 @@ public class HttpMthods {
         movieService = retrofit.create(MovieService.class);
     }
 
-    public void getTopMovies(int start, int count, Action1<String> onNextAction, Action1<Throwable> onErrorAction, Action0 onCompletedAction){
+    public void getTopMovies(int start, int count, Observer<String> observer){
         movieService.getTopMovie(start, count)
                 .flatMap(new Func1<MovieEntity, Observable<Subject>>() {
                     @Override
@@ -67,7 +68,7 @@ public class HttpMthods {
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onNextAction, onErrorAction, onCompletedAction);
+                .subscribe(observer);
     }
 
 }
